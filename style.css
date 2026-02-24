@@ -85,6 +85,12 @@ button {
 }
 
 
+.theme-options button, 
+#theme-modal button {
+    color: #ffffff !important; /* Fuerza el color blanco */
+    font-weight: 600;          /* Opcional: para que se lea mejor */
+    cursor: pointer;
+}
 
 
 #update { background-color: var(--accent-color); color: white; }
@@ -93,4 +99,4 @@ button {
 .btn-download { background-color: #6366f1; color: white; margin-top: 10px; }
 .btn-download:hover { background-color: #4f46e5; }
 
-.chart-container { background: #ffffff05; border-radius: 12px; padding: 10px; }
+.chart-container { background:transparent; border-radius: 12px; padding: 10px; }

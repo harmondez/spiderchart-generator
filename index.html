@@ -12,15 +12,19 @@
         
         <div class="main-content">
             <div class="controls">
-                <div class="scale-config" style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #475569;">
-                    <label>Max. Scale (Points):</label>
-                    <input type="number" id="max-scale" value="10" min="1" style="width: 60px; margin-left: 10px;">
-                <div class="title-config" style="margin-bottom: 20px;">
+                <div class="config-section" style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #475569;">
+                    <div class="scale-config" style="margin-bottom: 15px;">
+                        <label>Max. Scale (Points):</label>
+                        <input type="number" id="max-scale" value="10" min="1" style="width: 60px; margin-left: 10px;">
+                    </div>
                     
-                    
-                    <label>Título del Gráfico:</label>
-                    <input type="text" id="chart-title-input" placeholder="Ej: Mi Perfil Técnico" style="width: 100%; margin-top: 5px;">
-                </div>
+                    <div class="title-config">
+                        <label>Título del Gráfico:</label>
+                        <textarea id="chart-title-input" 
+                        placeholder="Ej: Mi Perfil&#10;Técnico" 
+                        rows="2"
+                        style="width: 100%; margin-top: 5px; background: #1e293b; color: white; border: 1px solid #475569; border-radius: 5px; padding: 10px; resize: vertical; font-family: inherit;"></textarea>
+                    </div>
                 </div>
 
                 <div id="skills-container">
@@ -31,19 +35,23 @@
                     </div>
                 </div>
 
-                <button id="add-skill" type="button" style="background: #334155; color: white; margin-bottom: 10px;">
+                <button id="add-skill" type="button" style="background: #334155; color: white; width: 100%; margin-bottom: 10px;">
                     + Añadir Skill
                 </button>
                 
-                <button id="download" class="btn-download">Descargar PNG</button>
-                <button id="save-chart" style="background-color: #f59e0b; color: white; margin-top: 10px;">
-                    💾 Guardar Proyecto Actual
-                </button>
+                <div class="actions" style="display: flex; flex-direction: column; gap: 10px;">
+                    <button id="open-themes" style="background-color: #8b5cf6; color: white;">
+                        🎨 Personalizar Diseño
+                    </button>
+                    <button id="save-chart" style="background-color: #f59e0b; color: white;">
+                        💾 Guardar Proyecto
+                    </button>
+                    <button id="download" class="btn-download">Descargar PNG</button>
+                </div>
 
                 <div class="saved-charts-section" style="margin-top: 30px; border-top: 1px dashed #475569; padding-top: 20px;">
                     <h3>📂 Mis Gráficos Guardados</h3>
-                    <div id="saved-list" class="saved-list">
-                        </div>
+                    <div id="saved-list" class="saved-list"></div>
                 </div>
             </div>
 
@@ -51,6 +59,40 @@
                 <canvas id="myChart"></canvas>
             </div>
         </div> 
-    </div> <script src="script.js"></script>
+    </div>
+
+    <div id="theme-modal" class="modal" style="display:none; position:fixed; z-index:100; left:0; top:0; width:100%; height:100%; background: rgba(0,0,0,0.85); overflow-y: auto;">
+        <div style="background: #0f172a; margin: 5% auto; padding: 25px; border-radius: 20px; width: 90%; max-width: 600px; border: 1px solid #334155; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+            
+            <h2 style="color: white; margin-bottom: 20px;">Personaliza tu Vibe</h2>
+            
+            <h3 style="color: #94a3b8; font-size: 14px; text-transform: uppercase; margin-bottom: 10px;">Colour</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 25px;">
+                <button onclick="aplicarColor('emerald')" style="background: #064e3b; border: 1px solid #10b981; color: white; padding: 8px;">Emerald</button>
+                <button onclick="aplicarColor('ocean')" style="background: #1e3a8a; border: 1px solid #3b82f6; color: white; padding: 8px;">Ocean</button>
+                <button onclick="aplicarColor('sunset')" style="background: #7c2d12; border: 1px solid #f97316; color: white; padding: 8px;">Sunset</button>
+                <button onclick="aplicarColor('neon')" style="background: #831843; border: 1px solid #ec4899; color: white; padding: 8px;">Neon</button>
+                <button onclick="aplicarColor('slate')" style="background: #334155; border: 1px solid #94a3b8; color: white; padding: 8px;">Slate</button>
+                <button onclick="aplicarColor('volcano')" style="background: #7f1d1d; border: 1px solid #ef4444; color: white; padding: 8px;">Volcano</button>
+                <button onclick="aplicarColor('royal')" style="background: #4c1d95; border: 1px solid #8b5cf6; color: white; padding: 8px;">Royal</button>
+                <button onclick="aplicarColor('forest')" style="background: #064e3b; border: 1px solid #22c55e; color: white; padding: 8px;">Forest</button>
+                <button onclick="aplicarColor('gold')" style="background: #713f12; border: 1px solid #eab308; color: white; padding: 8px;">Gold</button>
+                <button onclick="aplicarColor('ghost')" style="background: #1e293b; border: 1px solid #f8fafc; color: white; padding: 8px;">Ghost</button>
+            </div>
+
+            <h3 style="color: #94a3b8; font-size: 14px; text-transform: uppercase; margin-bottom: 10px;">Style</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                <button onclick="aplicarEstilo('normal')" style="background: #334155; color: white; border: 1px solid #475569; padding: 10px;">Normal</button>
+                <button onclick="aplicarEstilo('bolas')" style="background: #334155; color: white; border: 1px solid #475569; padding: 10px;">Big Dot</button>
+                <button onclick="aplicarEstilo('rayas')" style="background: #334155; color: white; border: 1px solid #475569; padding: 10px;">Stripes</button>
+            </div>
+
+            <button onclick="cerrarTemas()" style="margin-top: 30px; width: 100%; background: #3b82f6; color: white; font-weight: bold; border-radius: 10px; padding: 12px;">
+                ¡Done!
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
