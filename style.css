@@ -4,99 +4,168 @@
     --text-color: #f8fafc;
     --accent-color: #10b981;
     --input-bg: #334155;
+    --modal-bg: #0f172a;
 }
 
+/* Base */
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     justify-content: center;
-    padding: 40px;
+    padding: 20px; /* Reducido para móviles */
+    margin: 0;
 }
 
 .container {
     background-color: var(--card-bg);
     padding: 2rem;
     border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    max-width: 900px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    max-width: 1000px;
     width: 100%;
 }
 
-h1 { text-align: center; color: var(--accent-color); }
+h1 { text-align: center; color: var(--accent-color); margin-bottom: 2rem; }
 
+/* Layout principal responsivo */
 .main-content {
     display: grid;
-    grid-template-columns: 1fr 2fr; /* Controles a la izquierda, gráfico a la derecha */
+    grid-template-columns: 1fr 1.5fr; 
     gap: 30px;
-    align-items: center;
+    align-items: start;
 }
 
+
+
+/* Controles e Inputs */
 .controls {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-label { font-weight: 600; font-size: 0.9rem; }
+label { font-weight: 600; font-size: 0.9rem; color: #94a3b8; }
 
-input {
+input, textarea {
     background: var(--input-bg);
     border: 1px solid #475569;
     color: white;
-    padding: 8px;
-    border-radius: 6px;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s;
 }
 
-
-
-/*Botones*/
-
-.btn-remove {
-    background-color: #ef4444; /* Rojo alerta */
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 0 12px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.2s;
+input:focus, textarea:focus {
+    border-color: var(--accent-color);
+    outline: none;
 }
 
-.btn-remove:hover {
-    background-color: #dc2626;
-}
-
-/* Ajustamos el grupo para que quepan 3 elementos en línea */
 .input-group {
     display: flex;
     gap: 10px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
+/* Botones Generales */
 button {
     cursor: pointer;
     padding: 12px;
     border: none;
     border-radius: 8px;
     font-weight: bold;
-    transition: 0.3s;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
 }
 
+button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
 
-.theme-options button, 
+button:active { transform: translateY(0); }
+
+.btn-remove {
+    background-color: #ef4444;
+    color: white;
+    padding: 0 15px;
+}
+
+.btn-download { background-color: #6366f1; color: white; }
+#save-chart { background-color: #f59e0b; color: white; }
+#open-themes { background-color: #8b5cf6; color: white; }
+
+/* --- MODAL DE TEMAS --- */
+/* --- MODAL COMO PANEL FLOTANTE --- */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
+    /* Quitamos el fondo negro (rgba(0,0,0,0.85)) para que se vea el gráfico */
+    background: transparent; 
+    /* Posicionamos el panel a la derecha */
+    right: 20px; 
+    top: 50%;
+    transform: translateY(-50%);
+    width: auto;
+    height: auto;
+}
+
+.modal-content {
+    background-color: rgba(30, 41, 59, 0.95); /* Fondo semi-transparente */
+    padding: 20px;
+    border-radius: 15px;
+    width: 320px; /* Tamaño más pequeño tipo pestaña */
+    border: 1px solid #334155;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px); /* Efecto cristal para no tapar bruscamente */
+}
+
+/* Ajuste para móviles: que se ponga abajo para no tapar el gráfico */
+@media (max-width: 768px) {
+    .modal {
+        right: 0;
+        left: 0;
+        bottom: 20px;
+        top: auto;
+        transform: none;
+        display: flex;
+        justify-content: center;
+    }
+    .modal-content {
+        width: 90%;
+    }
+}
+
+/* Botones dentro del modal */
 #theme-modal button {
-    color: #ffffff !important; /* Fuerza el color blanco */
-    font-weight: 600;          /* Opcional: para que se lea mejor */
-    cursor: pointer;
+    color: #ffffff !important;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
+#theme-modal h3 {
+    margin-top: 25px;
+    font-size: 14px;
+    color: #94a3b8;
+}
 
-#update { background-color: var(--accent-color); color: white; }
-#update:hover { background-color: #059669; }
+/* Estilo para los items guardados en la lista */
+.saved-item {
+    transition: background 0.3s;
+}
+.saved-item:hover {
+    background: #475569 !important;
+}
 
-.btn-download { background-color: #6366f1; color: white; margin-top: 10px; }
-.btn-download:hover { background-color: #4f46e5; }
-
-.chart-container { background:transparent; border-radius: 12px; padding: 10px; }
+/* Gráfico */
+.chart-container {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
