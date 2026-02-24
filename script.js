@@ -1,7 +1,7 @@
 const ctx = document.getElementById('myChart').getContext('2d');
 let indiceProyectoActual = null; 
 
-// 1. Inicializamos el gráfico (Igual que el tuyo)
+// 1. Inicializamos el gráfico
 let myChart = new Chart(ctx, {
     type: 'radar',
     data: {
@@ -40,7 +40,6 @@ let myChart = new Chart(ctx, {
     }
 });
 
-// Referencias (Igual que el tuyo)
 const maxScaleInput = document.getElementById('max-scale');
 const titleInput = document.getElementById('chart-title-input');
 const skillsContainer = document.getElementById('skills-container');
@@ -66,15 +65,12 @@ function actualizarGrafico() {
     myChart.data.datasets[0].data = valores;
     myChart.options.scales.r.max = nuevoMaximo; 
 
-    myChart.options.plugins = {
-        legend: { display: false },
-        title: {
-            display: textoRaw.trim() !== "", 
-            text: lineasTitulo,
-            color: '#f8fafc',
-            font: { size: 20, weight: 'bold', family: "'Segoe UI', sans-serif" },
-            padding: { top: 10, bottom: 20 }
-        }
+    myChart.options.plugins.title = {
+        display: textoRaw.trim() !== "", 
+        text: lineasTitulo,
+        color: '#f8fafc',
+        font: { size: 20, weight: 'bold', family: "'Segoe UI', sans-serif" },
+        padding: { top: 10, bottom: 20 }
     };
     
     myChart.update();
@@ -84,7 +80,7 @@ function actualizarGrafico() {
     }
 }
 
-// 3. PERSISTENCIA Y GUARDADO
+// 3. PERSISTENCIA
 function guardarAutomatico() {
     if (indiceProyectoActual === null) return;
 
@@ -128,9 +124,9 @@ saveBtn.addEventListener('click', () => {
             bg: ds.backgroundColor,
             border: ds.borderColor,
             point: ds.pointBackgroundColor,
-            dash: ds.borderDash,
-            radius: ds.pointRadius,
-            width: ds.borderWidth
+            dash: ds.borderDash || [],
+            radius: ds.pointRadius || 5,
+            width: ds.borderWidth || 3
         },
         fecha: new Date().toLocaleDateString()
     };
@@ -139,9 +135,7 @@ saveBtn.addEventListener('click', () => {
     historico.push(chartData);
     localStorage.setItem('misCharts', JSON.stringify(historico));
     
-    // ¡IMPORTANTE!: Sincronizamos el índice con el nuevo guardado
     indiceProyectoActual = historico.length - 1; 
-    
     renderizarLista();
 });
 
@@ -153,8 +147,8 @@ window.cargarChart = function(index) {
     titleInput.value = item.tituloGrafico || "";
     maxScaleInput.value = item.max;
 
+    const ds = myChart.data.datasets[0];
     if (item.estilo) {
-        const ds = myChart.data.datasets[0];
         ds.backgroundColor = item.estilo.bg;
         ds.borderColor = item.estilo.border;
         ds.pointBackgroundColor = item.estilo.point;
@@ -168,31 +162,31 @@ window.cargarChart = function(index) {
         crearFilaSkill(label, item.values[i], item.max);
     });
     actualizarGrafico();
+    renderizarLista(); // Para resaltar el seleccionado
 };
 
 function renderizarLista() {
-        // Dentro de renderizarLista
-    div.className = 'saved-item';
-    div.style = ""; // Deja que el CSS maneje el diseño
-    
     const historico = JSON.parse(localStorage.getItem('misCharts')) || [];
-    const savedList = document.getElementById('saved-list');
     savedList.innerHTML = '';
 
     historico.forEach((item, index) => {
         const div = document.createElement('div');
         div.className = 'saved-item';
-        // Estilo igual al que tienes, pero controlado para el scroll
-        div.style = "background: #334155; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; color: white; border: 1px solid transparent; transition: 0.3s;";
+        
+        // Estilo especial si es el proyecto seleccionado
+        const esActivo = (indiceProyectoActual === index) ? "border: 1px solid #10b981; background: #1e293b;" : "border: 1px solid transparent;";
+
+        // REDUCCIÓN DE TAMAÑO: Padding de 10px a 6px, margin-bottom de 10px a 5px
+        div.style = `padding: 6px 10px; border-radius: 8px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; color: white; transition: 0.3s; ${esActivo}`;
         
         div.innerHTML = `
-            <div style="flex: 1;">
-                <strong style="font-size: 0.9rem;">${item.nombre}</strong><br>
-                <small style="color: #94a3b8; font-size: 0.75rem;">${item.fecha}</small>
+            <div style="flex: 1; line-height: 1.1;">
+                <strong style="font-size: 0.8rem;">${item.nombre}</strong><br>
+                <small style="color: #94a3b8; font-size: 0.6rem;">${item.fecha}</small>
             </div>
-            <div style="display: flex; gap: 5px;">
-                <button onclick="cargarChart(${index})" style="background: #10b981; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-size: 0.8rem;">Cargar</button>
-                <button onclick="borrarGuardado(${index})" style="background: #ef4444; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-size: 0.8rem;">X</button>
+            <div style="display: flex; gap: 4px;">
+                <button onclick="cargarChart(${index})" style="background: #10b981; color: white; border: none; padding: 3px 8px; cursor: pointer; border-radius: 4px; font-size: 0.7rem;">Cargar</button>
+                <button onclick="borrarGuardado(${index})" style="background: #ef4444; color: white; border: none; padding: 3px 8px; cursor: pointer; border-radius: 4px; font-size: 0.7rem;">X</button>
             </div>`;
         savedList.appendChild(div);
     });
@@ -208,11 +202,9 @@ window.borrarGuardado = function(index) {
     } else if (indiceProyectoActual > index) {
         indiceProyectoActual--;
     }
-    
     renderizarLista();
 };
 
-// 4. RESTO DE FUNCIONES (Igual que el tuyo)
 function crearFilaSkill(label = "", value = 0, max = 10) {
     const newGroup = document.createElement('div');
     newGroup.className = 'input-group';
@@ -234,23 +226,20 @@ addBtn.addEventListener('click', () => {
     actualizarGrafico();
 });
 
-// Listeners
 titleInput.addEventListener('input', actualizarGrafico);
 maxScaleInput.addEventListener('input', actualizarGrafico);
 skillsContainer.addEventListener('input', actualizarGrafico);
 
-// Modal y Temas (Igual que el tuyo)
-
 const paletas = {
     emerald: { bg: 'rgba(16, 185, 129, 0.2)', border: '#10b981', point: '#10b981' },
     ocean:   { bg: 'rgba(59, 130, 246, 0.3)', border: '#3b82f6', point: '#3b82f6' },
-    sunset:  { bg: 'rgba(249, 115, 22, 0.3)',  border: '#f97316', point: '#f97316' },
+    sunset:  { bg: 'rgba(249, 115, 22, 0.3)', border: '#f97316', point: '#f97316' },
     neon:    { bg: 'rgba(236, 72, 153, 0.2)', border: '#ec4899', point: '#fb7185' },
     slate:   { bg: 'rgba(148, 163, 184, 0.2)', border: '#94a3b8', point: '#475569' },
-    volcano: { bg: 'rgba(239, 68, 68, 0.3)',  border: '#b91c1c', point: '#f87171' },
+    volcano: { bg: 'rgba(239, 68, 68, 0.3)', border: '#b91c1c', point: '#f87171' },
     royal:   { bg: 'rgba(139, 92, 246, 0.3)', border: '#8b5cf6', point: '#ddd6fe' },
     forest:  { bg: 'rgba(34, 197, 94, 0.15)', border: '#14532d', point: '#15803d' },
-    gold:    { bg: 'rgba(234, 179, 8, 0.2)',  border: '#ca8a04', point: '#fef08a' },
+    gold:    { bg: 'rgba(234, 179, 8, 0.2)', border: '#ca8a04', point: '#fef08a' },
     ghost:   { bg: 'rgba(255, 255, 255, 0.05)', border: 'rgba(255,255,255,0.6)', point: '#fff' }
 };
 
@@ -260,74 +249,32 @@ const formas = {
     rayas:  { dash: [5, 5], radius: 5, width: 2 }
 };
 
-
-
-
 const themeModal = document.getElementById('theme-modal');
 document.getElementById('open-themes').addEventListener('click', () => themeModal.style.display = 'block');
 window.cerrarTemas = () => themeModal.style.display = 'none';
 
-
-
-
-// ... (Aquí van tus funciones aplicarColor, aplicarEstilo y tus objetos paletas/formas) ...
-
 window.aplicarColor = function(nombreColor) {
-    console.log("Cambiando a color:", nombreColor);
     const p = paletas[nombreColor];
-    if (!p) {
-        console.error("La paleta no existe:", nombreColor);
-        return;
-    }
-    
+    if (!p) return;
     const ds = myChart.data.datasets[0];
     ds.backgroundColor = p.bg;
     ds.borderColor = p.border;
     ds.pointBackgroundColor = p.point;
-    ds.pointBorderColor = "#fff"; // Asegura que los puntos se vean bien
-    
-    myChart.update();
-    
-    // Si hay un proyecto cargado, esto guardará el color automáticamente
-    if (typeof guardarAutomatico === "function") {
-        guardarAutomatico();
-    }
+    ds.pointBorderColor = "#fff";
+    actualizarGrafico();
 };
 
 window.aplicarEstilo = function(nombreEstilo) {
-    console.log("Cambiando a estilo:", nombreEstilo);
     const f = formas[nombreEstilo];
-    if (!f) {
-        console.error("El estilo no existe:", nombreEstilo);
-        return;
-    }
-    
+    if (!f) return;
     const ds = myChart.data.datasets[0];
     ds.borderDash = f.dash;
     ds.pointRadius = f.radius;
     ds.pointHoverRadius = f.radius + 3;
     ds.borderWidth = f.width;
-    
-    myChart.update();
-
-    if (typeof guardarAutomatico === "function") {
-        guardarAutomatico();
-    }
+    actualizarGrafico();
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-// Descarga
 document.getElementById('download').addEventListener('click', () => {
     const link = document.createElement('a');
     link.download = 'spider-chart.png';
@@ -335,40 +282,21 @@ document.getElementById('download').addEventListener('click', () => {
     link.click();
 });
 
-
-
-// Función para limpiar todo y empezar de cero
-// Función para limpiar el editor y empezar un proyecto desde cero
 window.nuevoProyecto = function() {
-    // 1. IMPORTANTE: Ponemos el índice en null para que el Autosave no afecte a los proyectos viejos
     indiceProyectoActual = null; 
-
-    // 2. Limpiamos los campos de texto
     titleInput.value = "";
     maxScaleInput.value = 10;
-
-    // 3. Reseteamos las filas de habilidades (dejamos una vacía por defecto)
     skillsContainer.innerHTML = '';
     crearFilaSkill("Nueva Habilidad", 0, 10); 
-
-    // 4. Opcional: Resetear el estilo visual a Emerald (por defecto)
     const ds = myChart.data.datasets[0];
     ds.backgroundColor = 'rgba(16, 185, 129, 0.2)';
     ds.borderColor = '#10b981';
     ds.pointBackgroundColor = '#10b981';
     ds.borderDash = [];
     ds.pointRadius = 5;
-
-    // 5. Actualizamos el gráfico visualmente
     actualizarGrafico();
-    
-    alert("Editor reiniciado. Ahora puedes crear un nuevo gráfico sin sobreescribir los anteriores.");
+    renderizarLista();
 };
-
-
-
-
-
 
 // Inicio
 renderizarLista();
