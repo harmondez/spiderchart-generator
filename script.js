@@ -172,16 +172,23 @@ window.cargarChart = function(index) {
 
 function renderizarLista() {
     const historico = JSON.parse(localStorage.getItem('misCharts')) || [];
+    const savedList = document.getElementById('saved-list');
     savedList.innerHTML = '';
+
     historico.forEach((item, index) => {
         const div = document.createElement('div');
         div.className = 'saved-item';
-        div.style = "background: #334155; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; color: white;";
+        // Estilo igual al que tienes, pero controlado para el scroll
+        div.style = "background: #334155; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; color: white; border: 1px solid transparent; transition: 0.3s;";
+        
         div.innerHTML = `
-            <div><strong>${item.nombre}</strong><br><small style="color: #94a3b8">${item.fecha}</small></div>
-            <div>
-                <button onclick="cargarChart(${index})" style="background: #10b981; color: white; border: none; padding: 5px 10px; cursor: pointer;">Cargar</button>
-                <button onclick="borrarGuardado(${index})" style="background: #ef4444; color: white; border: none; padding: 5px 10px; cursor: pointer;">X</button>
+            <div style="flex: 1;">
+                <strong style="font-size: 0.9rem;">${item.nombre}</strong><br>
+                <small style="color: #94a3b8; font-size: 0.75rem;">${item.fecha}</small>
+            </div>
+            <div style="display: flex; gap: 5px;">
+                <button onclick="cargarChart(${index})" style="background: #10b981; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-size: 0.8rem;">Cargar</button>
+                <button onclick="borrarGuardado(${index})" style="background: #ef4444; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-size: 0.8rem;">X</button>
             </div>`;
         savedList.appendChild(div);
     });

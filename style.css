@@ -162,6 +162,47 @@ button:active { transform: translateY(0); }
     background: #475569 !important;
 }
 
+/* Contenedor de la sección de guardados */
+.saved-charts-section {
+    width: 100%;
+    margin-top: 30px;
+    border-top: 1px dashed #475569;
+    padding-top: 20px;
+}
+
+/* La lista con Scroll */
+.saved-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columnas para que se vean bien debajo del gráfico */
+    gap: 15px;
+    max-height: 280px; /* Altura justa para que quepan 2 filas (4 perfiles) */
+    overflow-y: auto;  /* Activa el scroll vertical */
+    padding-right: 10px; /* Espacio para que la barra de scroll no tape los botones */
+}
+
+/* Personalización de la barra de scroll (opcional, para que sea elegante) */
+.saved-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.saved-list::-webkit-scrollbar-track {
+    background: #1e293b;
+    border-radius: 10px;
+}
+
+.saved-list::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 10px;
+}
+
+.saved-list::-webkit-scrollbar-thumb:hover {
+    background: #10b981;
+}
+
+
+
+
+
 /* Gráfico */
 .chart-container {
     background: rgba(255, 255, 255, 0.02);

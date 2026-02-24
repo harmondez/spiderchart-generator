@@ -46,28 +46,29 @@
                     <button id="save-chart" style="background-color: #f59e0b; color: white;">
                         💾 Guardar Proyecto
                     </button>
-                    <button id="download" class="btn-download">Descargar PNG</button>
-                </div>
-
-                <div class="saved-charts-section" style="margin-top: 30px; border-top: 1px dashed #475569; padding-top: 20px;">
-                    <h3>📂 Mis Gráficos Guardados</h3>
-                    <div id="saved-list" class="saved-list"></div>
-                    <button onclick="nuevoProyecto()" style="background-color: #3b82f6; color: white; margin-top: 10px; width: 100%;">
+                    <button onclick="nuevoProyecto()" style="background-color: #3b82f6; color: white;">
                         ➕ Nuevo Proyecto (Limpiar)
                     </button>
+                    <button id="download" class="btn-download">Descargar PNG</button>
                 </div>
             </div>
 
-            <div class="chart-container">
+            <div class="chart-container" style="display: flex; flex-direction: column; align-items: center;">
                 <canvas id="myChart"></canvas>
+
+                <div class="saved-charts-section" style="width: 100%; margin-top: 30px; border-top: 1px dashed #475569; padding-top: 20px;">
+                    <h3 style="text-align: center; color: #94a3b8; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">
+                        📂 Biblioteca de Perfiles (Comparar)
+                    </h3>
+                    <div id="saved-list" class="saved-list">
+                        </div>
+                </div>
             </div>
         </div> 
     </div>
 
     <div id="theme-modal" class="modal">
-    
         <div class="modal-content">
-            
             <h2 style="color: white; margin-bottom: 20px; text-align: center;">Personaliza tu Vibe</h2>
             
             <h3 style="color: #94a3b8; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">
