@@ -15,6 +15,12 @@
                 <div class="scale-config" style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #475569;">
                     <label>Max. Scale (Points):</label>
                     <input type="number" id="max-scale" value="10" min="1" style="width: 60px; margin-left: 10px;">
+                <div class="title-config" style="margin-bottom: 20px;">
+                    
+                    
+                    <label>Título del Gráfico:</label>
+                    <input type="text" id="chart-title-input" placeholder="Ej: Mi Perfil Técnico" style="width: 100%; margin-top: 5px;">
+                </div>
                 </div>
 
                 <div id="skills-container">
@@ -30,6 +36,15 @@
                 </button>
                 
                 <button id="download" class="btn-download">Descargar PNG</button>
+                <button id="save-chart" style="background-color: #f59e0b; color: white; margin-top: 10px;">
+                    💾 Guardar Proyecto Actual
+                </button>
+
+                <div class="saved-charts-section" style="margin-top: 30px; border-top: 1px dashed #475569; padding-top: 20px;">
+                    <h3>📂 Mis Gráficos Guardados</h3>
+                    <div id="saved-list" class="saved-list">
+                        </div>
+                </div>
             </div>
 
             <div class="chart-container">
