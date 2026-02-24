@@ -171,6 +171,10 @@ window.cargarChart = function(index) {
 };
 
 function renderizarLista() {
+        // Dentro de renderizarLista
+    div.className = 'saved-item';
+    div.style = ""; // Deja que el CSS maneje el diseño
+    
     const historico = JSON.parse(localStorage.getItem('misCharts')) || [];
     const savedList = document.getElementById('saved-list');
     savedList.innerHTML = '';
