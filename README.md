@@ -3,7 +3,7 @@
 A professional, interactive, and highly customizable **Radar Chart** creation tool. Designed for developers, data analysts, and professionals who need to visualize technical profiles or skill sets with elegance and precision.
 
 <p align="center">
-  <a href="https://github.com/harmondez/spiderchart-generator.git">
+  <a href="https://harmondez.github.io/spiderchart-generator/">
     <img src="https://img.shields.io/badge/🚀_LAUNCH_APP-CLICK_HERE-8b5cf6?style=for-the-badge&logo=rocket" alt="Launch App">
   </a>
 </p>
