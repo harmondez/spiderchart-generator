@@ -661,35 +661,65 @@ window.exportarCombinePNG = async function() {
 
 // 4. Exportar a PDF
 window.exportarCombinePDF = async function() {
-    mostrarToast("Generando PDF...");
+    mostrarToast("Generando PDF paginado...");
     const { jsPDF } = window.jspdf;
-    const canvas = await capturarHojaCombine();
-    if (!canvas) return;
+    
+    // 1. Obtenemos todas las tarjetas de gráficos individuales
+    const tarjetas = document.querySelectorAll('.comparison-card');
+    
+    if (tarjetas.length === 0) {
+        mostrarToast("⚠️ No hay gráficos para exportar");
+        return;
+    }
 
-    const imgData = canvas.toDataURL('image/png', 1.0);
     const doc = new jsPDF('p', 'mm', 'a4');
-    const titulo = "Informe Comparativo SpiderPro";
-
-    // Estilo elegante (igual que tu editor)
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 15;
+    const cardWidth = (pageWidth - (margin * 3)) / 2; // Dos columnas
+    
+    // Título principal
     doc.setFont("helvetica", "bold");
     doc.setFontSize(18);
     doc.setTextColor(15, 23, 42);
-    doc.text(titulo, 105, 20, { align: "center" });
+    doc.text("Informe Comparativo SpiderPro", 105, 15, { align: "center" });
 
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const imgWidth = pageWidth - 20; 
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    // 2. Iteramos sobre las tarjetas
+    for (let i = 0; i < tarjetas.length; i++) {
+        // ¿Necesitamos una nueva página? (Cada 4 gráficos, excepto el primero)
+        if (i > 0 && i % 4 === 0) {
+            doc.addPage();
+            // Opcional: repetir título en páginas nuevas
+            doc.setFontSize(12);
+            doc.text("Informe Comparativo (Continuación)", 105, 15, { align: "center" });
+        }
 
-    doc.addImage(imgData, 'PNG', 10, 30, imgWidth, imgHeight);
+        // Capturamos la tarjeta individual
+        const canvas = await html2canvas(tarjetas[i], { scale: 2, backgroundColor: "#ffffff" });
+        const imgData = canvas.toDataURL('image/png');
 
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(148, 163, 184);
-    doc.text(`Generado el: ${new Date().toLocaleString()}`, 105, 285, { align: "center" });
+        // Calcular posición (Grid de 2x2)
+        const col = i % 2; // 0 o 1
+        const row = Math.floor((i % 4) / 2); // 0 o 1
+        
+        const x = margin + (col * (cardWidth + margin));
+        const y = 30 + (row * 110); // 30 es el margen superior, 110 es el alto estimado de la fila
 
-    doc.save(`Comparativa_SpiderPro_${Date.now()}.pdf`);
+        // Añadir la tarjeta al PDF
+        const imgHeight = (canvas.height * cardWidth) / canvas.width;
+        doc.addImage(imgData, 'PNG', x, y, cardWidth, imgHeight);
+
+        // Pie de página en cada página
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(148, 163, 184);
+        const pagNum = Math.floor(i / 4) + 1;
+        doc.text(`Página ${pagNum} - Generado por SpiderPro`, 105, 285, { align: "center" });
+    }
+
+    doc.save(`Comparativa_Paginada_${Date.now()}.pdf`);
     cerrarModalExportar();
-    mostrarToast("✅ PDF descargado");
+    mostrarToast("✅ PDF Multi-página descargado");
 };
 
 // 5. Limpiar Hoja
