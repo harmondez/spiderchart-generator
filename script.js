@@ -1,5 +1,8 @@
 const ctx = document.getElementById('myChart').getContext('2d');
 let indiceProyectoActual = null; 
+let puntoSeleccionado = null;
+let datasetIndexSeleccionado = null;
+let estaArrastrando = false;
 
 // 1. Inicializamos el gráfico
 let myChart = new Chart(ctx, {
@@ -101,6 +104,78 @@ function actualizarGrafico() {
         guardarAutomatico();
     }
 }
+
+
+
+// INTERACTIVIDAD
+
+const canvas = document.getElementById('myChart');
+
+// Detectar cuando pulsamos un punto
+canvas.onmousedown = (e) => {
+    const puntos = myChart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, Array);
+    if (puntos.length > 0) {
+        puntoSeleccionado = puntos[0].index;
+        datasetIndexSeleccionado = puntos[0].datasetIndex;
+        estaArrastrando = true;
+        canvas.style.cursor = 'grabbing';
+    }
+};
+
+// Detectar el movimiento y calcular el nuevo valor
+window.onmousemove = (e) => {
+    if (!estaArrastrando) return;
+
+    // 1. Obtener coordenadas del ratón relativas al canvas
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // 2. Obtener el centro del gráfico y la escala
+    const scale = myChart.scales.r;
+    const centroX = scale.xCenter;
+    const centroY = scale.yCenter;
+
+    // 3. Calcular distancia desde el centro al ratón (Teorema de Pitágoras)
+    const distanciaPixeles = Math.sqrt(Math.pow(x - centroX, 2) + Math.pow(y - centroY, 2));
+
+    // 4. Convertir píxeles a valor de la escala (0 a Max)
+    const valorMax = scale.max;
+    const radioMax = scale.drawingArea; // El radio máximo en píxeles del círculo
+    
+    let nuevoValor = (distanciaPixeles / radioMax) * valorMax;
+
+    // Limitar entre 0 y el máximo definido
+    nuevoValor = Math.max(0, Math.min(valorMax, nuevoValor));
+    nuevoValor = parseFloat(nuevoValor.toFixed(1)); // Redondear a 1 decimal para precisión
+
+    // 5. Actualizar el gráfico
+    myChart.data.datasets[datasetIndexSeleccionado].data[puntoSeleccionado] = nuevoValor;
+    myChart.update('none'); // 'none' para que no haya animaciones lentas mientras arrastras
+
+    // 6. ¡IMPORTANTE! Sincronizar con el input de texto de la izquierda
+    const inputsValues = document.querySelectorAll('.value-input');
+    if (inputsValues[puntoSeleccionado]) {
+        inputsValues[puntoSeleccionado].value = nuevoValor;
+    }
+};
+
+// Soltar el punto
+window.onmouseup = () => {
+    if (estaArrastrando) {
+        estaArrastrando = false;
+        puntoSeleccionado = null;
+        canvas.style.cursor = 'default';
+        actualizarGrafico(); // Para asegurar que todo se guarde y sincronice
+    }
+};
+
+
+
+
+
+
+
 
 // 3. PERSISTENCIA
 function guardarAutomatico() {
