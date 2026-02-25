@@ -178,35 +178,20 @@ window.onmouseup = () => {
 
 
 // 3. PERSISTENCIA
-function guardarAutomatico() {
-    if (indiceProyectoActual === null) return;
 
-    let historico = JSON.parse(localStorage.getItem('misCharts')) || [];
-    if (!historico[indiceProyectoActual]) return;
 
-    const ds = myChart.data.datasets[0];
+// Usamos una función limpia para evitar duplicados
+saveBtn.onclick = () => {
+    // 1. Si el proyecto YA ESTÁ activo, solo guardamos los cambios sin preguntar nombre
+    if (indiceProyectoActual !== null) {
+        guardarAutomatico();
+        // Opcional: mostrar un aviso visual de que se guardó
+        console.log("Cambios guardados en el proyecto actual.");
+        renderizarLista();
+        return; 
+    }
 
-    historico[indiceProyectoActual] = {
-        ...historico[indiceProyectoActual], 
-        tituloGrafico: titleInput.value,
-        labels: Array.from(document.querySelectorAll('.label-input')).map(i => i.value),
-        values: Array.from(document.querySelectorAll('.value-input')).map(i => i.value),
-        max: maxScaleInput.value,
-        estilo: {
-            bg: ds.backgroundColor,
-            border: ds.borderColor,
-            point: ds.pointBackgroundColor,
-            dash: ds.borderDash || [],
-            radius: ds.pointRadius || 5,
-            width: ds.borderWidth || 3
-        },
-        fecha: new Date().toLocaleDateString()
-    };
-
-    localStorage.setItem('misCharts', JSON.stringify(historico));
-}
-
-saveBtn.addEventListener('click', () => {
+    // 2. Si es un proyecto NUEVO (indiceProyectoActual es null), preguntamos nombre
     const nombre = prompt("Dale un nombre a tu gráfico:", "Mi Perfil Técnico");
     if (!nombre) return;
 
@@ -214,8 +199,8 @@ saveBtn.addEventListener('click', () => {
     const chartData = {
         nombre: nombre,
         tituloGrafico: titleInput.value,
-        labels: Array.from(document.querySelectorAll('.label-input')).map(i => i.value),
-        values: Array.from(document.querySelectorAll('.value-input')).map(i => i.value),
+        labels: Array.from(document.querySelectorAll('.label-input')).map(i => i.value || "Skill"),
+        values: Array.from(document.querySelectorAll('.value-input')).map(i => Number(i.value) || 0),
         max: maxScaleInput.value,
         estilo: {
             bg: ds.backgroundColor,
@@ -232,9 +217,10 @@ saveBtn.addEventListener('click', () => {
     historico.push(chartData);
     localStorage.setItem('misCharts', JSON.stringify(historico));
     
+    // Marcamos este nuevo proyecto como el actual
     indiceProyectoActual = historico.length - 1; 
     renderizarLista();
-});
+};
 
 window.cargarChart = function(index) {
     const historico = JSON.parse(localStorage.getItem('misCharts'));
@@ -289,18 +275,7 @@ function renderizarLista() {
     });
 }
 
-window.borrarGuardado = function(index) {
-    let historico = JSON.parse(localStorage.getItem('misCharts'));
-    historico.splice(index, 1);
-    localStorage.setItem('misCharts', JSON.stringify(historico));
-    
-    if (indiceProyectoActual === index) {
-        indiceProyectoActual = null;
-    } else if (indiceProyectoActual > index) {
-        indiceProyectoActual--;
-    }
-    renderizarLista();
-};
+
 
 function crearFilaSkill(label = "", value = 0, max = 10) {
     const newGroup = document.createElement('div');
@@ -404,6 +379,157 @@ window.exportarImagen = function() {
 
 
 
+// ZONA DE GUARDADO - SAVE
+
+// --- GUARDADO AUTOMÁTICO ---
+
+// 1. Asegúrate de tener esta función arriba o cerca del guardado
+function mostrarToast(mensaje) {
+    const toast = document.getElementById("toast");
+    if (!toast) return; // Si no existe el div en HTML, no hace nada
+    toast.innerText = mensaje;
+    toast.className = "show";
+    setTimeout(() => { toast.className = ""; }, 3000);
+}
+
+// 2. LIMPIEZA DE EVENTOS FANTASMA
+// Clonamos el botón para eliminar cualquier click repetido previo
+const btnOriginal = document.getElementById('save-chart');
+const btnNuevo = btnOriginal.cloneNode(true);
+btnOriginal.parentNode.replaceChild(btnNuevo, btnOriginal);
+
+// 3. LÓGICA DE GUARDADO ÚNICA
+btnNuevo.onclick = () => {
+    // Caso A: El proyecto ya existe, guardamos sin preguntar
+    if (indiceProyectoActual !== null) {
+        guardarAutomatico();
+        renderizarLista();
+        mostrarToast("✅ Cambios guardados");
+        return; 
+    }
+
+    // Caso B: Es un proyecto nuevo, pedimos nombre
+    const nombre = prompt("Dale un nombre a tu gráfico:", "Mi Perfil Técnico");
+    if (!nombre) return;
+
+    const ds = myChart.data.datasets[0]; 
+    const chartData = {
+        nombre: nombre,
+        tituloGrafico: titleInput.value,
+        labels: Array.from(document.querySelectorAll('.label-input')).map(i => i.value || "Skill"),
+        values: Array.from(document.querySelectorAll('.value-input')).map(i => Number(i.value) || 0),
+        max: Number(maxScaleInput.value) || 10,
+        estilo: {
+            bg: ds.backgroundColor,
+            border: ds.borderColor,
+            point: ds.pointBackgroundColor,
+            dash: ds.borderDash || [],
+            radius: ds.pointRadius || 5,
+            width: ds.borderWidth || 3
+        },
+        fecha: new Date().toLocaleDateString()
+    };
+
+    let historico = JSON.parse(localStorage.getItem('misCharts')) || [];
+    historico.push(chartData);
+    localStorage.setItem('misCharts', JSON.stringify(historico));
+    
+    indiceProyectoActual = historico.length - 1; 
+    renderizarLista();
+    mostrarToast("🚀 ¡Proyecto guardado!");
+};
+
+
+
+
+
+function guardarAutomatico() {
+    if (indiceProyectoActual === null) return;
+
+    let historico = JSON.parse(localStorage.getItem('misCharts')) || [];
+    if (!historico[indiceProyectoActual]) return;
+
+    const ds = myChart.data.datasets[0];
+
+    historico[indiceProyectoActual] = {
+        ...historico[indiceProyectoActual], 
+        tituloGrafico: titleInput.value,
+        // CORRECCIÓN: Convertir valores a números para evitar bugs de cálculo
+        labels: Array.from(document.querySelectorAll('.label-input')).map(i => i.value || "Skill"),
+        values: Array.from(document.querySelectorAll('.value-input')).map(i => Number(i.value) || 0),
+        max: Number(maxScaleInput.value) || 10,
+        estilo: {
+            bg: ds.backgroundColor,
+            border: ds.borderColor,
+            point: ds.pointBackgroundColor,
+            dash: ds.borderDash || [],
+            radius: ds.pointRadius || 5,
+            width: ds.borderWidth || 3
+        },
+        fecha: new Date().toLocaleDateString()
+    };
+
+    localStorage.setItem('misCharts', JSON.stringify(historico));
+}
+
+// --- BORRAR PROYECTO ---
+window.borrarGuardado = function(index) {
+    let historico = JSON.parse(localStorage.getItem('misCharts')) || [];
+    historico.splice(index, 1);
+    localStorage.setItem('misCharts', JSON.stringify(historico));
+    
+    // CORRECCIÓN: Manejo de índices para que no se desincronice la lista
+    if (indiceProyectoActual === index) {
+        indiceProyectoActual = null;
+    } else if (indiceProyectoActual > index) {
+        indiceProyectoActual--;
+    }
+    
+    renderizarLista();
+    // Si estás en modo COMBINE, también refrescamos esa lista
+    if (typeof renderizarListaCombine === "function") renderizarListaCombine();
+};
+
+// --- EL BOTÓN DE GUARDAR (Indispensable para crear el primer índice) ---
+if (saveBtn) {
+    saveBtn.addEventListener('click', () => {
+        const nombre = prompt("Nombre del perfil:", "Mi Perfil Técnico");
+        if (!nombre) return;
+
+        const ds = myChart.data.datasets[0];
+        const nuevoRegistro = {
+            nombre: nombre,
+            tituloGrafico: titleInput.value,
+            labels: Array.from(document.querySelectorAll('.label-input')).map(i => i.value || "Skill"),
+            values: Array.from(document.querySelectorAll('.value-input')).map(i => Number(i.value) || 0),
+            max: Number(maxScaleInput.value) || 10,
+            estilo: {
+                bg: ds.backgroundColor,
+                border: ds.borderColor,
+                point: ds.pointBackgroundColor,
+                dash: ds.borderDash || [],
+                radius: ds.pointRadius || 5,
+                width: ds.borderWidth || 3
+            },
+            fecha: new Date().toLocaleDateString()
+        };
+
+        let historico = JSON.parse(localStorage.getItem('misCharts')) || [];
+        historico.push(nuevoRegistro);
+        localStorage.setItem('misCharts', JSON.stringify(historico));
+        
+        // Establecemos este como el proyecto activo para que el auto-guardado funcione
+        indiceProyectoActual = historico.length - 1;
+        
+        renderizarLista();
+        alert("¡Perfil guardado y vinculado para auto-guardado!");
+    });
+}
+
+
+
+
+
 
 window.nuevoProyecto = function() {
     indiceProyectoActual = null; 
@@ -464,6 +590,122 @@ window.exportarPDF = function() {
 
 
 // COMBINE
+
+// --- SECCIÓN COMBINE JS ---
+
+// 1. Abrir/Cerrar Modal
+window.abrirModalExportar = function() {
+    const modal = document.getElementById('export-modal');
+    if (modal) modal.style.display = 'flex';
+};
+
+window.cerrarModalExportar = function() {
+    const modal = document.getElementById('export-modal');
+    if (modal) modal.style.display = 'none';
+};
+
+// 2. Función maestra para "fotografiar" la hoja
+async function capturarHojaCombine() {
+    const hoja = document.querySelector('.comparison-canvas');
+    const botones = document.querySelector('.comparison-header'); 
+
+    if (botones) botones.style.opacity = '0';
+
+    // Añadimos un pequeño retraso de 100ms para que el navegador procese el cambio de opacidad
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    try {
+        const canvasVirtual = await html2canvas(hoja, {
+            scale: 2,
+            backgroundColor: "#ffffff",
+            useCORS: true,      // Crucial si hay imágenes externas
+            allowTaint: false,  // Evita que el canvas se "ensucie" y bloquee la descarga
+            logging: true       // Esto nos dirá en la consola (F12) si algo falla
+        });
+        return canvasVirtual;
+    } catch (error) {
+        console.error("Error capturando la hoja:", error);
+        return null;
+    } finally {
+        if (botones) botones.style.opacity = '1';
+    }
+}
+
+// 3. Exportar a PNG
+window.exportarCombinePNG = async function() {
+    mostrarToast("Generando PNG...");
+    const canvas = await capturarHojaCombine();
+    
+    if (!canvas) {
+        alert("Error al generar la imagen");
+        return;
+    }
+
+    try {
+        const imgData = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        
+        // Forzamos la descarga añadiendo el link al documento temporalmente
+        document.body.appendChild(link);
+        link.download = `Comparativa_SpiderPro_${Date.now()}.png`;
+        link.href = imgData;
+        link.click();
+        document.body.removeChild(link);
+        
+        cerrarModalExportar();
+        mostrarToast("✅ PNG descargado");
+    } catch (e) {
+        console.error("Fallo al exportar PNG:", e);
+    }
+};
+
+// 4. Exportar a PDF
+window.exportarCombinePDF = async function() {
+    mostrarToast("Generando PDF...");
+    const { jsPDF } = window.jspdf;
+    const canvas = await capturarHojaCombine();
+    if (!canvas) return;
+
+    const imgData = canvas.toDataURL('image/png', 1.0);
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const titulo = "Informe Comparativo SpiderPro";
+
+    // Estilo elegante (igual que tu editor)
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.setTextColor(15, 23, 42);
+    doc.text(titulo, 105, 20, { align: "center" });
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const imgWidth = pageWidth - 20; 
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    doc.addImage(imgData, 'PNG', 10, 30, imgWidth, imgHeight);
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(148, 163, 184);
+    doc.text(`Generado el: ${new Date().toLocaleString()}`, 105, 285, { align: "center" });
+
+    doc.save(`Comparativa_SpiderPro_${Date.now()}.pdf`);
+    cerrarModalExportar();
+    mostrarToast("✅ PDF descargado");
+};
+
+// 5. Limpiar Hoja
+window.limpiarComparacion = function() {
+    const grid = document.getElementById('comparison-grid');
+    if (grid) {
+        grid.innerHTML = '';
+        mostrarToast("🗑️ Hoja limpiada");
+    }
+};
+
+
+
+
+
+
 
 // Cambiar entre el Editor y el modo Combine
 function cambiarSeccion(seccion) {
@@ -614,9 +856,7 @@ window.anadirAComparacion = function(index) {
     });
 };
 
-function limpiarComparacion() {
-    document.getElementById('comparison-grid').innerHTML = '';
-}
+
 
 
 

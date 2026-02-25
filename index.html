@@ -5,10 +5,12 @@
     <title>Spider Chart Generator</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header class="main-header">
+        
         <div class="header-container">
             <div class="logo">
                 <span class="icon">🕸️</span> Spider<span>Pro</span>
@@ -38,11 +40,19 @@
             </aside>
 
             <section class="comparison-canvas">
+                <div class="comparison-header" style="display: flex; gap: 10px;">
+                    <button onclick="abrirModalExportar()" class="btn-export" style="background: #6b6b6b; color: white;">
+                        DOWNLOAD
+                    </button>
+
+                    <button onclick="limpiarComparacion()" class="btn-clear" style="background: #c14545; color: white;">
+                        RESET
+                    </button>
+                    
+                </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h2 style="color: #0f172a; margin: 0;">Panel de Comparación</h2>
-                    <button onclick="limpiarComparacion()" style="background: #ef4444; color: white; padding: 5px 15px;">
-                        Limpiar Hoja
-                    </button>
+                    
                 </div>
                 
                 <div id="comparison-grid" class="comparison-grid">
@@ -50,7 +60,7 @@
             </section>
         </div>
     </div>
-    
+
     <div class="container">
         <div class="main-content">
             <div class="controls">
@@ -108,7 +118,6 @@
         </div> 
     </div>
 
-    
 
     <footer class="main-footer">
         <div class="footer-content">
@@ -166,6 +175,16 @@
                 <button onclick="exportarPDF()" style="background: #ec4899; color: white;">📄 Download PDF</button>
                 <button onclick="cerrarDownload()" style="background: transparent; border: 1px solid #475569; color: #94a3b8; margin-top: 10px;">Cancel</button>
             </div>
+        </div>
+    </div>
+    <div id="toast"></div>
+    <!--COMBINE DONWLOAD-->
+    <div id="export-modal" class="modal">
+        <div class="modal-content">
+            <h3>Exportar Comparativa</h3>
+            <button onclick="exportarCombinePNG()" style="background: #6366f1;">PNG</button>
+            <button onclick="exportarCombinePDF()" style="background: #8b5cf6;">PDF</button>
+            <button onclick="cerrarModalExportar()">Cancelar</button>
         </div>
     </div>
 

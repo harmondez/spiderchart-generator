@@ -32,15 +32,18 @@ h1 { text-align: center; color: var(--accent-color); margin-bottom: 2rem; }
 /* Layout principal */
 .main-content {
     display: grid;
-    grid-template-columns: 1fr 1.5fr; 
+    grid-template-columns: 350px 1fr; /* Panel de control a la izquierda, gráfico a la derecha */
     gap: 30px;
     align-items: start;
+    max-width: 95%; /* Igual que en Combine */
+    margin: 0 auto;
 }
 
 /* Ajuste Responsivo */
-@media (max-width: 850px) {
+/* --- RESPONSIVE --- */
+@media (max-width: 1100px) {
     .main-content {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* En móvil, uno debajo de otro */
     }
 }
 
@@ -118,8 +121,11 @@ button:hover {
 
 
 #myChart {
-    cursor: crosshair; /* Indica que se puede interactuar con precisión */
-    touch-action: none; /* Evita que el móvil haga scroll al intentar arrastrar */
+    width: 100% !important;
+    height: auto !important;
+    max-height: 600px; /* Evita que crezca demasiado verticalmente */
+    margin-bottom: 10px;
+    margin-right: 2px;
 }
 
 
@@ -146,7 +152,16 @@ button:hover {
 }
 
 
-/*COMBINE*/
+/* --- SECCIÓN COMBINE (WIDE MODE) --- */
+
+/* Forzamos a que esta sección sea mucho más ancha que el editor normal */
+#combine-section.container {
+    max-width: 95% !important; 
+    width: 95%;
+    margin: 30px auto;
+    background-color: transparent; /* Para que resalte la hoja blanca sobre el fondo oscuro */
+    box-shadow: none;
+}
 
 #combine-section, .main-content {
     animation: fadeIn 0.3s ease-in-out;
@@ -157,59 +172,110 @@ button:hover {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Layout de Combine */
-/* Layout de Combine: 300px para la lista, el resto para la hoja blanca */
+/* Layout: Sidebar fijo a 280px, Hoja blanca expandible */
 .combine-layout {
     display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 25px;
+    grid-template-columns: 280px 1fr;
+    gap: 30px;
     align-items: start;
 }
 
-/* La Hoja en Blanco profesional */
+/* La Hoja en Blanco (Papel) */
 .comparison-canvas {
-    background: #ffffff; /* Fondo blanco tipo papel */
-    border-radius: 16px;
-    padding: 30px;
-    min-height: 80vh;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    background: #ffffff; 
+    border-radius: 20px;
+    padding: 40px; /* Más padding para que los textos periféricos no toquen el borde */
+    min-height: 85vh;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.4);
     border: 1px solid #e2e8f0;
 }
 
-/* El Grid: 2 gráficos por fila */
+/* El Grid: 2 gráficos por fila con espacio generoso */
 .comparison-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 30px;
+    gap: 40px;
 }
 
-/* Tarjeta de cada gráfico dentro de la comparación */
+/* Tarjeta de cada gráfico */
 .comparison-card {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
-    padding: 15px;
-    border-radius: 12px;
+    padding: 25px;
+    border-radius: 15px;
     text-align: center;
+    transition: transform 0.2s ease;
 }
 
-@media (max-width: 1000px) {
-    .combine-layout { grid-template-columns: 1fr; }
-    .comparison-grid { grid-template-columns: 1fr; }
+.comparison-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
 }
 
+.comparison-card h4 {
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    color: #0f172a;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 10px;
+}
+
+/* Canvas interno: Permitimos que crezca para no cortar texto */
 .comparison-card canvas {
-    max-width: 100%;
+    width: 100% !important;
     height: auto !important;
+    min-height: 350px; /* Asegura un tamaño mínimo legible */
 }
 
+/* Botón de limpiar */
 .btn-clear {
     background: #ef4444;
     color: white;
-    font-size: 10px;
-    padding: 5px 10px;
+    font-size: 11px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+.btn-export {
+    background: #c14545;
+    color: white;
+}
+/* --- RESPONSIVE --- */
+@media (max-width: 1100px) {
+    .combine-layout { grid-template-columns: 1fr; }
+    .comparison-grid { grid-template-columns: 1fr; }
+    #combine-section.container { width: 98%; }
 }
 
 
+
+
+
+#toast {
+    visibility: hidden;
+    min-width: 250px;
+    background-color: #10b981; /* Verde esmeralda */
+    color: white;
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 5000; /* Por encima de todo */
+    left: 50%;
+    bottom: 30px;
+    transform: translateX(-50%);
+    font-weight: bold;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+#toast.show {
+    visibility: visible;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+@keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
 
 
@@ -263,14 +329,15 @@ button:hover {
 
 /* Gráfico */
 .chart-container {
-    background: #ffffff; /* Fondo blanco puro */
-    border-radius: 16px;
-    padding: 20px;
-    border: 1px solid #e2e8f0; /* Borde gris muy claro */
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); /* Sombra suave para que resalte */
+    /* Quitamos el min-height fijo para evitar scrolls innecesarios en pantallas pequeñas */
+    min-height: auto; 
 }
 
 
@@ -393,4 +460,13 @@ main.container {
 .logo-min:hover {
     transform: scale(1.2);
     filter: brightness(1.2);
+}
+
+
+
+/* Aseguramos que el modal de exportación se vea centrado */
+#export-modal {
+    background: rgba(0,0,0,0.8);
+    align-items: center;
+    justify-content: center;
 }
