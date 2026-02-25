@@ -111,6 +111,14 @@ button:hover {
 #save-chart { background-color: #f59e0b; color: white; }
 #open-themes { background-color: #8b5cf6; color: white; }
 
+
+#theme-modal button {
+    color: #ffffff !important; /* Fuerza el texto a blanco */
+}
+
+
+
+
 /* --- MODAL FLOTANTE --- */
 .modal {
     display: none; 

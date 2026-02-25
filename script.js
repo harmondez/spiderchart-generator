@@ -262,7 +262,11 @@ const paletas = {
     royal:   { bg: 'rgba(139, 92, 246, 0.3)', border: '#8b5cf6', point: '#ddd6fe' },
     forest:  { bg: 'rgba(34, 197, 94, 0.15)', border: '#14532d', point: '#15803d' },
     gold:    { bg: 'rgba(234, 179, 8, 0.2)', border: '#ca8a04', point: '#fef08a' },
-    ghost:   { bg: 'rgba(255, 255, 255, 0.05)', border: 'rgba(255,255,255,0.6)', point: '#fff' }
+    ghost: { 
+        bg: 'rgba(203, 213, 225, 0.4)', // Gris muy suave para el relleno
+        border: '#475569',             // Gris oscuro para el borde (ahora se verá)
+        point: '#1e293b'               // Puntos en azul casi negro para contraste
+    }
 };
 
 const formas = {
