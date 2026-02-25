@@ -54,18 +54,27 @@ h1 { text-align: center; color: var(--accent-color); margin-bottom: 2rem; }
 label { font-weight: 600; font-size: 0.85rem; color: #94a3b8; }
 
 input, textarea {
-    background: var(--input-bg);
-    border: 1px solid #475569;
-    color: white;
+    background: #ffffff; /* Fondo blanco para los inputs */
+    border: 1px solid #cbd5e1;
+    color: #0f172a;      /* TEXTO NEGRO */
     padding: 10px;
     border-radius: 8px;
     font-size: 14px;
-    transition: border-color 0.3s;
+    transition: all 0.3s;
 }
 
+/* Para que cuando el usuario escriba, se vea bien */
 input:focus, textarea:focus {
     border-color: var(--accent-color);
+    background: #ffffff;
+    color: #000000;
     outline: none;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
+}
+
+.label-input {
+    color: #0f172a; /* Asegura que sea negro */
+    font-weight: 500;
 }
 
 .input-group {
@@ -172,11 +181,12 @@ button:hover {
 
 /* Gráfico */
 .chart-container {
-    background: rgba(255, 255, 255, 0.02);
+    background: #ffffff; /* Fondo blanco puro */
     border-radius: 16px;
-    padding: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border: 1px solid #e2e8f0; /* Borde gris muy claro */
     display: flex;
     flex-direction: column;
     align-items: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); /* Sombra suave para que resalte */
 }

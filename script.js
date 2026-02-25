@@ -19,25 +19,34 @@ let myChart = new Chart(ctx, {
         }]
     },
     options: {
-        responsive: true,
-        scales: {
-            r: {
-                angleLines: { color: '#475569' },
-                grid: { color: '#475569' },
-                pointLabels: { color: '#f8fafc', font: { size: 14 } },
-                min: 0,
-                max: 10,
-                ticks: { 
-                    stepSize: 2,
-                    backdropColor: 'transparent', 
-                    color: '#94a3b8' 
-                }
+    responsive: true,
+    scales: {
+        r: {
+            angleLines: { color: '#e2e8f0' }, 
+            grid: { color: '#e2e8f0' },
+            // --- ESTA ES LA PARTE QUE DEBES CAMBIAR ---
+            pointLabels: { 
+                color: '#000000',             // CAMBIADO A NEGRO
+                font: { 
+                    size: 14, 
+                    weight: 'bold',
+                    family: "'Segoe UI', sans-serif" 
+                } 
+            },
+            // -----------------------------------------
+            min: 0,
+            max: 10,
+            ticks: { 
+                stepSize: 2,
+                backdropColor: 'transparent', 
+                color: '#64748b' 
             }
-        },
-        plugins: {
-            legend: { display: false }
         }
+    },
+    plugins: {
+        legend: { display: false }
     }
+}
 });
 
 const maxScaleInput = document.getElementById('max-scale');
@@ -55,21 +64,34 @@ function actualizarGrafico() {
     const textoRaw = titleInput.value;
     const lineasTitulo = textoRaw.split('\n');
 
-    const etiquetas = Array.from(inputsLabels).map(input => input.value || "Habilidad");
+    const etiquetas = Array.from(inputsLabels).map(input => input.value || "Skill");
     const valores = Array.from(inputsValues).map(input => {
         let val = Number(input.value);
         return val > nuevoMaximo ? nuevoMaximo : val;
     });
 
+    // --- LÓGICA DE TAMAÑO DINÁMICO PARA ETIQUETAS ---
+    // Buscamos la etiqueta más larga para determinar el tamaño general
+    const longitudMaxima = etiquetas.reduce((max, str) => Math.max(max, str.length), 0);
+    
+    let fontSizeDinamico = 14; // Tamaño base
+    if (longitudMaxima > 12) fontSizeDinamico = 12;
+    if (longitudMaxima > 17) fontSizeDinamico = 12;
+    if (longitudMaxima > 12) fontSizeDinamico = 12;
+    // -----------------------------------------------
+
     myChart.data.labels = etiquetas;
     myChart.data.datasets[0].data = valores;
     myChart.options.scales.r.max = nuevoMaximo; 
 
+    // Aplicamos el tamaño dinámico a las etiquetas de las puntas
+    myChart.options.scales.r.pointLabels.font.size = fontSizeDinamico;
+
     myChart.options.plugins.title = {
         display: textoRaw.trim() !== "", 
         text: lineasTitulo,
-        color: '#f8fafc',
-        font: { size: 20, weight: 'bold', family: "'Segoe UI', sans-serif" },
+        color: '#0f172a',
+        font: { size: 30, weight: 'bold', family: "'Segoe UI', sans-serif" },
         padding: { top: 10, bottom: 20 }
     };
     
@@ -209,8 +231,8 @@ function crearFilaSkill(label = "", value = 0, max = 10) {
     const newGroup = document.createElement('div');
     newGroup.className = 'input-group';
     newGroup.innerHTML = `
-        <input type="text" class="label-input" placeholder="Habilidad" value="${label}">
-        <input type="number" class="value-input" value="${value}" min="0" max="${max}">
+        <input type="text" class="label-input" placeholder="Habilidad" value="${label}" style="color: #000000;">
+        <input type="number" class="value-input" value="${value}" min="0" max="${max}" style="color: #000000;">
         <button class="btn-remove" onclick="eliminarFila(this)">-</button>
     `;
     skillsContainer.appendChild(newGroup);
@@ -275,12 +297,34 @@ window.aplicarEstilo = function(nombreEstilo) {
     actualizarGrafico();
 };
 
+
+
+// Referencia al nuevo modal de descarga
+const downloadModal = document.getElementById('download-modal');
+
+// Cambiamos el comportamiento del botón principal
 document.getElementById('download').addEventListener('click', () => {
+    // En lugar de descargar, mostramos el modal
+    downloadModal.style.display = 'block';
+});
+
+// Función para cerrar el modal de descarga
+window.cerrarDownload = function() {
+    downloadModal.style.display = 'none';
+};
+
+// Función para exportar PNG (ahora llamada desde el modal)
+window.exportarImagen = function() {
     const link = document.createElement('a');
-    link.download = 'spider-chart.png';
+    const titulo = titleInput.value.trim() || "spider-chart";
+    link.download = `${titulo.replace(/\s+/g, '_')}.png`;
     link.href = document.getElementById('myChart').toDataURL('image/png', 1.0);
     link.click();
-});
+    cerrarDownload(); // Cerramos el popup tras descargar
+};
+
+
+
 
 window.nuevoProyecto = function() {
     indiceProyectoActual = null; 
@@ -297,6 +341,50 @@ window.nuevoProyecto = function() {
     actualizarGrafico();
     renderizarLista();
 };
+
+
+window.exportarPDF = function() {
+    // 1. Instanciamos jsPDF desde el espacio de nombres global
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', 'a4'); // Formato A4 en vertical
+
+    // 2. Obtenemos el canvas y el título
+    const canvas = document.getElementById('myChart');
+    const titulo = titleInput.value.trim() || "Spider Chart Profile";
+
+    // 3. Convertimos el gráfico en una imagen PNG de alta calidad
+    const imgData = canvas.toDataURL('image/png', 1.0);
+
+    // 4. Añadimos el título al PDF
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.setTextColor(15, 23, 42); // Color oscuro (#0f172a)
+    doc.text(titulo, 105, 20, { align: "center" });
+
+    // 5. Calculamos dimensiones para que el gráfico encaje bien centrado
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const imgWidth = pageWidth - 40; // Margen de 20mm a cada lado
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    // 6. Añadimos la imagen del gráfico al PDF
+    doc.addImage(imgData, 'PNG', 20, 40, imgWidth, imgHeight);
+
+    // 7. Añadimos una marca de tiempo opcional al pie de página
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(148, 163, 184); // Color gris (#94a3b8)
+    doc.text(`Generado el: ${new Date().toLocaleString()}`, 105, 280, { align: "center" });
+
+    // 8. Descargamos el archivo y cerramos el modal
+    doc.save(`${titulo.replace(/\s+/g, '_')}.pdf`);
+    
+    if (typeof cerrarDownload === "function") {
+        cerrarDownload();
+    }
+};
+
+
+
 
 // Inicio
 renderizarLista();

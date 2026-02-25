@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Spider Chart Generator</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -49,7 +50,7 @@
                     <button onclick="nuevoProyecto()" style="background-color: #3b82f6; color: white;">
                         ➕ NEW PROJECT
                     </button>
-                    <button id="download" class="btn-download">DOWNLOAD (.PNG)</button>
+                    <button id="download" class="btn-download">📤 Export</button>
                 </div>
             </div>
 
@@ -57,19 +58,17 @@
                 <canvas id="myChart"></canvas>
 
                 <div class="saved-charts-section">
-                    <h3>📂 Profile Library</h3>
-                    <div id="saved-list" class="saved-list">
-                        </div>
+                    <h3 style="color: #000000; text-align: center; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">
+                        📂 Profile Library
+                    </h3>
+                    <div id="saved-list" class="saved-list"></div>
                 </div>
-            </div>
             </div>
         </div> 
     </div>
 
     <div id="theme-modal" class="modal">
         <div class="modal-content">
-            
-            
             <h3 style="color: #94a3b8; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">
                 1. Colour
             </h3>
@@ -98,6 +97,17 @@
             <button onclick="cerrarTemas()" style="margin-top: 35px; width: 100%; background: #3b82f6; color: white; padding: 14px; font-size: 14px;">
                 Done!
             </button>
+        </div>
+    </div>
+
+    <div id="download-modal" class="modal">
+        <div class="modal-content" style="width: 280px; text-align: center;">
+            <h3 style="color: white; margin-bottom: 20px;">Export Profile</h3>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button onclick="exportarImagen()" style="background: #6366f1; color: white;">🖼️ Download PNG</button>
+                <button onclick="exportarPDF()" style="background: #ec4899; color: white;">📄 Download PDF</button>
+                <button onclick="cerrarDownload()" style="background: transparent; border: 1px solid #475569; color: #94a3b8; margin-top: 10px;">Cancel</button>
+            </div>
         </div>
     </div>
 
