@@ -19,9 +19,9 @@
                     </div>
                     
                     <div class="title-config">
-                        <label>Título del Gráfico:</label>
+                        <label>Title:</label>
                         <textarea id="chart-title-input" 
-                        placeholder="Ej: Mi Perfil&#10;Técnico" 
+                        placeholder="Ex: My technical profile" 
                         rows="2"
                         style="width: 100%; margin-top: 5px; background: #1e293b; color: white; border: 1px solid #475569; border-radius: 5px; padding: 10px; resize: vertical; font-family: inherit;"></textarea>
                     </div>
@@ -36,20 +36,20 @@
                 </div>
 
                 <button id="add-skill" type="button" style="background: #334155; color: white; width: 100%; margin-bottom: 10px;">
-                    + Añadir Skill
+                    + Add Skill
                 </button>
                 
                 <div class="actions" style="display: flex; flex-direction: column; gap: 10px;">
                     <button id="open-themes" style="background-color: #8b5cf6; color: white;">
-                        🎨 Personalizar Diseño
+                        🎨 Customize
                     </button>
                     <button id="save-chart" style="background-color: #f59e0b; color: white;">
-                        💾 Guardar Proyecto
+                        💾 SAVE
                     </button>
                     <button onclick="nuevoProyecto()" style="background-color: #3b82f6; color: white;">
-                        ➕ Nuevo Proyecto (Limpiar)
+                        ➕ NEW PROJECT
                     </button>
-                    <button id="download" class="btn-download">Descargar PNG</button>
+                    <button id="download" class="btn-download">DOWNLOAD (.PNG)</button>
                 </div>
             </div>
 
@@ -57,7 +57,7 @@
                 <canvas id="myChart"></canvas>
 
                 <div class="saved-charts-section">
-                    <h3>📂 Biblioteca de Perfiles (Comparar)</h3>
+                    <h3>📂 Profile Library</h3>
                     <div id="saved-list" class="saved-list">
                         </div>
                 </div>
@@ -68,10 +68,10 @@
 
     <div id="theme-modal" class="modal">
         <div class="modal-content">
-            <h2 style="color: white; margin-bottom: 20px; text-align: center;">Personaliza tu Vibe</h2>
+            
             
             <h3 style="color: #94a3b8; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">
-                1. Selecciona Color
+                1. Colour
             </h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 25px;">
                 <button onclick="aplicarColor('emerald')" style="background: #064e3b; border: 1px solid #10b981;">Emerald</button>
@@ -87,16 +87,16 @@
             </div>
 
             <h3 style="color: #94a3b8; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">
-                2. Selecciona Estilo
+                2. Style
             </h3>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
                 <button onclick="aplicarEstilo('normal')" style="background: #334155; border: 1px solid #475569;">Normal</button>
-                <button onclick="aplicarEstilo('bolas')" style="background: #334155; border: 1px solid #475569;">Bolas</button>
-                <button onclick="aplicarEstilo('rayas')" style="background: #334155; border: 1px solid #475569;">Rayas</button>
+                <button onclick="aplicarEstilo('bolas')" style="background: #334155; border: 1px solid #475569;">Big Dot</button>
+                <button onclick="aplicarEstilo('rayas')" style="background: #334155; border: 1px solid #475569;">Stripes</button>
             </div>
 
             <button onclick="cerrarTemas()" style="margin-top: 35px; width: 100%; background: #3b82f6; color: white; padding: 14px; font-size: 14px;">
-                ¡Listo!
+                Done!
             </button>
         </div>
     </div>
