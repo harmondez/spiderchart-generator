@@ -8,9 +8,50 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo">
+                <span class="icon">🕸️</span> Spider<span>Pro</span>
+            </div>
+            <nav class="nav-links">
+                <a href="#" id="nav-editor" class="active" onclick="cambiarSeccion('editor')">Editor</a>
+                
+                <a href="#" id="nav-combine" onclick="cambiarSeccion('combine')">Combine</a>
+                
+                <a href="https://github.com/harmondez/spiderchart-generator" target="_blank">
+                    <img src="assets/github-logo.webp" alt="Github Logo" class="logo-min">
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- COMBINE-->
+    <div id="combine-section" class="container" style="display: none; margin-top: 20px;">
+        <div class="combine-layout">
+            
+            <aside class="library-sidebar glass-panel">
+                <h3 style="color: var(--accent-color); margin-bottom: 15px; font-size: 0.9rem;">
+                    📂 SELECCIONA PERFILES
+                </h3>
+                <div id="combine-list" class="saved-list">
+                    </div>
+            </aside>
+
+            <section class="comparison-canvas">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: #0f172a; margin: 0;">Panel de Comparación</h2>
+                    <button onclick="limpiarComparacion()" style="background: #ef4444; color: white; padding: 5px 15px;">
+                        Limpiar Hoja
+                    </button>
+                </div>
+                
+                <div id="comparison-grid" class="comparison-grid">
+                    </div>
+            </section>
+        </div>
+    </div>
+    
     <div class="container">
-        <h1>🕸️ Spider Chart Generator</h1>
-        
         <div class="main-content">
             <div class="controls">
                 <div class="config-section" style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #475569;">
@@ -67,8 +108,25 @@
         </div> 
     </div>
 
+    
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p>© 2026 SpiderPro Generator • Created by Hernán Bareiro</p>
+            <div class="footer-status">
+                <span class="status-dot"></span> Online & Local Storage Active
+            </div>
+        </div>
+    </footer>
+
+
+    
     <div id="theme-modal" class="modal">
+
+        
         <div class="modal-content">
+            
+            <!-- cUSTOMIZER-->
             <h3 style="color: #94a3b8; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">
                 1. Colour
             </h3>

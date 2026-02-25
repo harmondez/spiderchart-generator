@@ -145,6 +145,75 @@ button:hover {
     backdrop-filter: blur(10px);
 }
 
+
+/*COMBINE*/
+
+#combine-section, .main-content {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Layout de Combine */
+/* Layout de Combine: 300px para la lista, el resto para la hoja blanca */
+.combine-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 25px;
+    align-items: start;
+}
+
+/* La Hoja en Blanco profesional */
+.comparison-canvas {
+    background: #ffffff; /* Fondo blanco tipo papel */
+    border-radius: 16px;
+    padding: 30px;
+    min-height: 80vh;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    border: 1px solid #e2e8f0;
+}
+
+/* El Grid: 2 gráficos por fila */
+.comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+/* Tarjeta de cada gráfico dentro de la comparación */
+.comparison-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+@media (max-width: 1000px) {
+    .combine-layout { grid-template-columns: 1fr; }
+    .comparison-grid { grid-template-columns: 1fr; }
+}
+
+.comparison-card canvas {
+    max-width: 100%;
+    height: auto !important;
+}
+
+.btn-clear {
+    background: #ef4444;
+    color: white;
+    font-size: 10px;
+    padding: 5px 10px;
+}
+
+
+
+
+
+
 /* --- BIBLIOTECA DE PERFILES (CORREGIDA) --- */
 .saved-charts-section {
     width: 100%;
@@ -153,7 +222,7 @@ button:hover {
     padding-top: 15px;
 }
 
-.saved-list {
+.combine-list {
     display: flex; /* Cambiado a Flex para scroll de lista simple */
     flex-direction: column;
     gap: 6px;
@@ -202,4 +271,126 @@ button:hover {
     flex-direction: column;
     align-items: center;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); /* Sombra suave para que resalte */
+}
+
+
+
+
+
+
+
+/* --- ADICIONES PARA HEADER Y FOOTER --- */
+
+/* Reajustamos el body para que permita que el Header y Footer ocupen todo el ancho */
+body {
+    display: flex;
+    flex-direction: column;
+    padding: 0; /* Quitamos el padding global para que el header toque los bordes */
+    min-height: 100vh;
+}
+
+/* El contenedor principal necesita un margen ahora que no hay padding en el body */
+main.container {
+    margin: 40px auto; 
+    flex: 1; /* Esto empuja el footer al final de la pantalla */
+}
+
+/* --- ESTILO DEL HEADER --- */
+.main-header {
+    background-color: rgba(30, 41, 59, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* Usamos tu color de tarjeta para coherencia */
+    border-bottom: 1px solid #334155;
+    padding: 1rem 0;
+    width: 100%;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+/* --- STICKY HEADER GO PSSSSSSSSSSSS --- */
+    position: sticky;    /* Se queda "pegado" */
+    top: 0;             /* En la posición 0 de la parte superior */
+    z-index: 1000;      /* Se asegura de pasar por encima de todo lo demás */
+    
+}
+
+.header-container {
+    max-width: 1000px; /* Alineado con el ancho de tu .container */
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.logo {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text-color);
+    letter-spacing: -0.5px;
+}
+
+.logo span { color: var(--accent-color); }
+
+.nav-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: color 0.3s;
+    text-transform: uppercase;
+}
+
+.nav-links a.active, .nav-links a:hover {
+    color: var(--accent-color);
+}
+
+/* --- ESTILO DEL FOOTER --- */
+.main-footer {
+    background-color: var(--card-bg);
+    border-top: 1px solid #334155;
+    padding: 25px 0;
+    width: 100%;
+    margin-top: auto;
+}
+
+.footer-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    color: #64748b;
+    font-size: 0.75rem;
+}
+
+.footer-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-dot {
+    height: 8px;
+    width: 8px;
+    background-color: var(--accent-color);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent-color);
+}
+
+
+/* LOGOS PEQUEÑOS*/
+.logo-min {
+    width: 24px;         /* Tamaño pequeño estándar */
+    height: 24px;
+    object-fit: contain; /* Asegura que no se deforme */
+    vertical-align: middle; 
+    transition: transform 0.2s ease, filter 0.2s ease;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+/* Efecto hover universal para todos tus logos pequeños */
+.logo-min:hover {
+    transform: scale(1.2);
+    filter: brightness(1.2);
 }

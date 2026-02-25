@@ -463,6 +463,163 @@ window.exportarPDF = function() {
 };
 
 
+// COMBINE
+
+// Cambiar entre el Editor y el modo Combine
+function cambiarSeccion(seccion) {
+    const editor = document.querySelector('.main-content');
+    const combine = document.getElementById('combine-section');
+    const btnEditor = document.getElementById('nav-editor');
+    const btnCombine = document.getElementById('nav-combine');
+
+    if (seccion === 'combine') {
+        // Mostrar vista de comparación
+        if (editor) editor.style.display = 'none';
+        if (combine) combine.style.display = 'block';
+        
+        // Actualizar estados del Nav (solo si los IDs existen)
+        btnCombine?.classList.add('active');
+        btnEditor?.classList.remove('active');
+        
+        // Llenar la biblioteca lateral de Combine
+        renderizarListaCombine();
+    } else {
+        // Volver al editor principal
+        if (editor) editor.style.display = 'grid'; // Asegúrate que coincida con tu CSS
+        if (combine) combine.style.display = 'none';
+        
+        btnEditor?.classList.add('active');
+        btnCombine?.classList.remove('active');
+        
+        // Forzar redibujado del gráfico principal por si acaso
+        actualizarGrafico();
+    }
+}
+
+// Renderizar la lista en el lateral de Combine
+function renderizarListaCombine() {
+    const historico = JSON.parse(localStorage.getItem('misCharts')) || [];
+    const container = document.getElementById('combine-list');
+    
+    // Seguridad: si el contenedor no existe en el DOM, no hacemos nada
+    if (!container) return;
+    
+    container.innerHTML = '';
+
+    if (historico.length === 0) {
+        container.innerHTML = '<p style="color: #94a3b8; font-size: 0.8rem; text-align: center; padding: 20px;">No hay perfiles guardados aún.</p>';
+        return;
+    }
+
+    historico.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'saved-item';
+        
+        // Añadimos estilos inline para asegurar que se vea bien en el sidebar estrecho
+        div.style.display = "flex";
+        div.style.justifyContent = "space-between";
+        div.style.alignItems = "center";
+        div.style.padding = "10px";
+        div.style.marginBottom = "8px";
+
+        div.innerHTML = `
+            <div style="display: flex; flex-direction: column; overflow: hidden;">
+                <span style="font-weight: 600; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    ${item.nombre}
+                </span>
+                <small style="font-size: 0.7rem; color: #94a3b8;">${item.labels.length} Skills</small>
+            </div>
+            <button onclick="anadirAComparacion(${index})" 
+                    style="background: #10b981; color: white; border: none; border-radius: 4px; padding: 4px 10px; cursor: pointer; font-weight: bold;">
+                +
+            </button>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// Añadir un gráfico a la hoja en blanco
+window.anadirAComparacion = function(index) {
+    const historico = JSON.parse(localStorage.getItem('misCharts'));
+    const item = historico[index];
+    const grid = document.getElementById('comparison-grid');
+
+    if (!grid) return;
+
+    // Crear el contenedor
+    const card = document.createElement('div');
+    card.className = 'comparison-card';
+    const canvasId = `chart-compare-${Date.now()}`;
+    
+    card.innerHTML = `
+        <h4 style="margin: 0 0 10px 0; font-size: 1rem; color: #0f172a;">${item.nombre}</h4>
+        <canvas id="${canvasId}"></canvas>
+    `;
+    grid.appendChild(card);
+
+    // Extraer el estilo guardado o usar uno por defecto si no existe
+    const estilo = item.estilo || {
+        bg: 'rgba(16, 185, 129, 0.2)',
+        border: '#10b981',
+        point: '#10b981',
+        dash: [],
+        radius: 5,
+        width: 3
+    };
+
+    // Dibujar el gráfico con SU estilo propio
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: item.labels,
+            datasets: [{
+                data: item.values,
+                // --- AQUÍ USAMOS LOS DATOS DEL OBJETO ESTILO ---
+                backgroundColor: estilo.bg,
+                borderColor: estilo.border,
+                pointBackgroundColor: estilo.point,
+                borderDash: estilo.dash,
+                pointRadius: estilo.radius,
+                borderWidth: estilo.width,
+                pointBorderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                r: {
+                    min: 0,
+                    max: Number(item.max) || 10,
+                    ticks: { display: false },
+                    grid: { color: '#e2e8f0' },
+                    angleLines: { color: '#e2e8f0' },
+                    pointLabels: { 
+                        font: { size: 9, weight: '600' },
+                        color: '#64748b'
+                    }
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                // Si guardaste el título del gráfico, también lo podemos poner aquí
+                title: {
+                    display: item.tituloGrafico ? true : false,
+                    text: item.tituloGrafico,
+                    font: { size: 12 }
+                }
+            }
+        }
+    });
+};
+
+function limpiarComparacion() {
+    document.getElementById('comparison-grid').innerHTML = '';
+}
+
+
+
 
 
 // Inicio
