@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Spider Chart Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="main-header">
+        
+        <div class="header-container">
+            <div class="logo">
+                <span class="icon">🕸️</span> Spider<span>Pro</span>
+            </div>
+            <nav class="nav-links">
+                <a href="#" id="nav-editor" class="active" onclick="cambiarSeccion('editor')">Editor</a>
+                
+                <a href="#" id="nav-combine" onclick="cambiarSeccion('combine')">Combine</a>
+                
+                <a href="https://github.com/harmondez/spiderchart-generator" target="_blank">
+                    <img src="assets/github-logo.webp" alt="Github Logo" class="logo-min">
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- COMBINE-->
+    <div id="combine-section" class="container" style="display: none; margin-top: 20px;">
+        <div class="combine-layout" >
+            
+            <aside class="library-sidebar glass-panel">
+                <h3 style="color: var(--accent-color); margin-bottom: 15px; font-size: 0.9rem;">
+                    📂 SELECCIONA PERFILES
+                </h3>
+                <div id="combine-list" class="saved-list">
+                    </div>
+            </aside>
+
+            <section class="comparison-canvas">
+                <div class="comparison-header" style="display: flex; gap: 10px;">
+                    <button onclick="abrirModalExportar()" class="btn-export" style="background: #6b6b6b; color: white;">
+                        DOWNLOAD
+                    </button>
+
+                    <button onclick="limpiarComparacion()" class="btn-clear" style="background: #c14545; color: white;">
+                        RESET
+                    </button>
+                    
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: #0f172a; margin: 0;">Panel de Comparación</h2>
+                    
+                </div>
+                
+                <div id="comparison-grid" class="comparison-grid">
+                    </div>
+            </section>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="controls">
+                <div class="config-section" style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #475569;">
+                    <div class="scale-config" style="margin-bottom: 15px;">
+                        <label>Max. Scale (Points):</label>
+                        <input type="number" id="max-scale" value="10" min="1" style="width: 60px; margin-left: 10px;">
+                    </div>
+                    
+                    <div class="title-config">
+                        <label>Title:</label>
+                        <textarea id="chart-title-input" 
+                        placeholder="Ex: My technical profile" 
+                        rows="2"
+                        style="width: 100%; margin-top: 5px; background: #1e293b; color: white; border: 1px solid #475569; border-radius: 5px; padding: 10px; resize: vertical; font-family: inherit;"></textarea>
+                    </div>
+                </div>
+
+                <div id="skills-container">
+                    <div class="input-group">
+                        <input type="text" class="label-input" value="Python">
+                        <input type="number" class="value-input" value="8" min="0" max="10">
+                        <button class="btn-remove" onclick="eliminarFila(this)">-</button>
+                    </div>
+                </div>
+
+                <button id="add-skill" type="button" style="background: #334155; color: white; width: 100%; margin-bottom: 10px;">
+                    + Add Skill
+                </button>
+                
+                <div class="actions" style="display: flex; flex-direction: column; gap: 10px;">
+                    <button id="open-themes" style="background-color: #8b5cf6; color: white;">
+                        🎨 Customize
+                    </button>
+                    <button id="save-chart" style="background-color: #f59e0b; color: white;">
+                        💾 SAVE
+                    </button>
+                    <button onclick="nuevoProyecto()" style="background-color: #3b82f6; color: white;">
+                        ➕ NEW PROJECT
+                    </button>
+                    <button id="download" class="btn-download">📤 Export</button>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="myChart"></canvas>
+
+                <div class="saved-charts-section">
+                    <h3 style="color: #000000; text-align: center; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">
+                        📂 Profile Library
+                    </h3>
+                    <div id="saved-list" class="saved-list"></div>
+                </div>
+            </div>
+        </div> 
+    </div>
+
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p>© 2026 SpiderPro Generator • Created by Hernán Bareiro</p>
+            <div class="footer-status">
+                <span class="status-dot"></span> Online & Local Storage Active
+            </div>
+        </div>
+    </footer>
+
+
+    
+    <div id="theme-modal" class="modal">
+
+        
+        <div class="modal-content">
+            
+            <!-- cUSTOMIZER-->
+            <h3 style="color: #94a3b8; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">
+                1. Colour
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 25px;">
+                <button onclick="aplicarColor('emerald')" style="background: #064e3b; border: 1px solid #10b981; color: white;">Emerald</button>
+                <button onclick="aplicarColor('ocean')" style="background: #1e3a8a; border: 1px solid #3b82f6; color: white;">Ocean</button>
+                <button onclick="aplicarColor('sunset')" style="background: #7c2d12; border: 1px solid #f97316; color: white;">Sunset</button>
+                <button onclick="aplicarColor('neon')" style="background: #831843; border: 1px solid #ec4899; color: white;">Neon</button>
+                <button onclick="aplicarColor('slate')" style="background: #334155; border: 1px solid #94a3b8; color: white;">Slate</button>
+                <button onclick="aplicarColor('volcano')" style="background: #7f1d1d; border: 1px solid #ef4444; color: white;">Volcano</button>
+                <button onclick="aplicarColor('royal')" style="background: #4c1d95; border: 1px solid #8b5cf6; color: white;">Royal</button>
+                <button onclick="aplicarColor('forest')" style="background: #064e3b; border: 1px solid #22c55e; color: white;">Forest</button>
+                <button onclick="aplicarColor('gold')" style="background: #713f12; border: 1px solid #eab308; color: white;">Gold</button>
+                <button onclick="aplicarColor('ghost')" style="background: #1e293b; border: 1px solid #f8fafc; color: white;">Ghost</button>
+            </div>
+
+            <h3 style="color: #94a3b8; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">
+                2. Style
+            </h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                <button onclick="aplicarEstilo('normal')" style="background: #334155; border: 1px solid #475569;">Normal</button>
+                <button onclick="aplicarEstilo('bolas')" style="background: #334155; border: 1px solid #475569;">Big Dot</button>
+                <button onclick="aplicarEstilo('rayas')" style="background: #334155; border: 1px solid #475569;">Stripes</button>
+            </div>
+
+            <button onclick="cerrarTemas()" style="margin-top: 35px; width: 100%; background: #3b82f6; color: white; padding: 14px; font-size: 14px;">
+                Done!
+            </button>
+        </div>
+    </div>
+
+    <div id="download-modal" class="modal">
+        <div class="modal-content" style="width: 280px; text-align: center;">
+            <h3 style="color: white; margin-bottom: 20px;">Export Profile</h3>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button onclick="exportarImagen()" style="background: #6366f1; color: white;">🖼️ Download PNG</button>
+                <button onclick="exportarPDF()" style="background: #ec4899; color: white;">📄 Download PDF</button>
+                <button onclick="cerrarDownload()" style="background: transparent; border: 1px solid #475569; color: #94a3b8; margin-top: 10px;">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <div id="toast"></div>
+    <!--COMBINE DONWLOAD-->
+    <div id="export-modal" class="modal">
+        <div class="modal-content">
+            <h3>Exportar Comparativa</h3>
+            <button onclick="exportarCombinePNG()" style="background: #6366f1;">PNG</button>
+            <button onclick="exportarCombinePDF()" style="background: #8b5cf6;">PDF</button>
+            <button onclick="cerrarModalExportar()">Cancelar</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
