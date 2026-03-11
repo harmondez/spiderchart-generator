@@ -1,0 +1,472 @@
+:root {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --text-color: #f8fafc;
+    --accent-color: #10b981;
+    --input-bg: #334155;
+    --modal-bg: #0f172a;
+}
+
+/* Base */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    margin: 0;
+}
+
+.container {
+    background-color: var(--card-bg);
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    max-width: 1000px;
+    width: 100%;
+}
+
+h1 { text-align: center; color: var(--accent-color); margin-bottom: 2rem; }
+
+/* Layout principal */
+.main-content {
+    display: grid;
+    grid-template-columns: 350px 1fr; /* Panel de control a la izquierda, gráfico a la derecha */
+    gap: 30px;
+    align-items: start;
+    max-width: 95%; /* Igual que en Combine */
+    margin: 0 auto;
+}
+
+/* Ajuste Responsivo */
+/* --- RESPONSIVE --- */
+@media (max-width: 1100px) {
+    .main-content {
+        grid-template-columns: 1fr; /* En móvil, uno debajo de otro */
+    }
+}
+
+/* Controles e Inputs */
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+label { font-weight: 600; font-size: 0.85rem; color: #94a3b8; }
+
+input, textarea {
+    background: #ffffff; /* Fondo blanco para los inputs */
+    border: 1px solid #cbd5e1;
+    color: #0f172a;      /* TEXTO NEGRO */
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+/* Para que cuando el usuario escriba, se vea bien */
+input:focus, textarea:focus {
+    border-color: var(--accent-color);
+    background: #ffffff;
+    color: #000000;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
+}
+
+.label-input {
+    color: #0f172a; /* Asegura que sea negro */
+    font-weight: 500;
+}
+
+.input-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+/* Botones Generales */
+button {
+    cursor: pointer;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+}
+
+.btn-remove {
+    background-color: #ef4444;
+    color: white;
+    padding: 0 12px;
+}
+
+.btn-download { background-color: #6366f1; color: white; }
+#save-chart { background-color: #f59e0b; color: white; }
+#open-themes { background-color: #8b5cf6; color: white; }
+
+
+#theme-modal button {
+    color: #ffffff !important; /* Fuerza el texto a blanco */
+}
+
+
+#myChart {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 600px; /* Evita que crezca demasiado verticalmente */
+    margin-bottom: 10px;
+    margin-right: 2px;
+}
+
+
+
+/* --- MODAL FLOTANTE --- */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
+    background: transparent; 
+    right: 20px; 
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.modal-content {
+    background-color: rgba(30, 41, 59, 0.98);
+    padding: 20px;
+    border-radius: 15px;
+    width: 280px; 
+    border: 1px solid #334155;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+}
+
+
+/* --- SECCIÓN COMBINE (WIDE MODE) --- */
+
+/* Forzamos a que esta sección sea mucho más ancha que el editor normal */
+#combine-section.container {
+    max-width: 95% !important; 
+    width: 95%;
+    margin: 30px auto;
+    background-color: transparent; /* Para que resalte la hoja blanca sobre el fondo oscuro */
+    box-shadow: none;
+}
+
+#combine-section, .main-content {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Layout: Sidebar fijo a 280px, Hoja blanca expandible */
+.combine-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+/* La Hoja en Blanco (Papel) */
+.comparison-canvas {
+    background: #ffffff; 
+    border-radius: 20px;
+    padding: 40px; /* Más padding para que los textos periféricos no toquen el borde */
+    min-height: 85vh;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.4);
+    border: 1px solid #e2e8f0;
+}
+
+/* El Grid: 2 gráficos por fila con espacio generoso */
+.comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+/* Tarjeta de cada gráfico */
+.comparison-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.comparison-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.comparison-card h4 {
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    color: #0f172a;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 10px;
+}
+
+/* Canvas interno: Permitimos que crezca para no cortar texto */
+.comparison-card canvas {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 350px; /* Asegura un tamaño mínimo legible */
+}
+
+/* Botón de limpiar */
+.btn-clear {
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+.btn-export {
+    background: #c14545;
+    color: white;
+}
+/* --- RESPONSIVE --- */
+@media (max-width: 1100px) {
+    .combine-layout { grid-template-columns: 1fr; }
+    .comparison-grid { grid-template-columns: 1fr; }
+    #combine-section.container { width: 98%; }
+}
+
+
+
+
+
+#toast {
+    visibility: hidden;
+    min-width: 250px;
+    background-color: #10b981; /* Verde esmeralda */
+    color: white;
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 5000; /* Por encima de todo */
+    left: 50%;
+    bottom: 30px;
+    transform: translateX(-50%);
+    font-weight: bold;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+#toast.show {
+    visibility: visible;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+@keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+
+
+
+
+/* --- BIBLIOTECA DE PERFILES (CORREGIDA) --- */
+.saved-charts-section {
+    width: 100%;
+    margin-top: 25px;
+    border-top: 1px dashed #475569;
+    padding-top: 15px;
+}
+
+.combine-list {
+    display: flex; /* Cambiado a Flex para scroll de lista simple */
+    flex-direction: column;
+    gap: 6px;
+    
+    /* Altura ajustada para mostrar 4 elementos pequeños */
+    max-height: 220px; 
+    
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 6px;
+    scrollbar-gutter: stable;
+}
+
+/* Elementos de la lista (Versión Pequeña) */
+.saved-item {
+    background: #334155;
+    padding: 8px 12px; /* Más compacto */
+    border-radius: 8px;
+    border: 1px solid #475569;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: row; /* En línea para ahorrar altura */
+    justify-content: space-between;
+    align-items: center;
+    min-height: 45px; 
+}
+
+.saved-item:hover {
+    background: #3c4b5e;
+    border-color: #10b981;
+}
+
+/* Scrollbar */
+.saved-list::-webkit-scrollbar { width: 5px; }
+.saved-list::-webkit-scrollbar-track { background: #1e293b; }
+.saved-list::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
+.saved-list::-webkit-scrollbar-thumb:hover { background: #10b981; }
+
+/* Gráfico */
+.chart-container {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    /* Quitamos el min-height fijo para evitar scrolls innecesarios en pantallas pequeñas */
+    min-height: auto; 
+}
+
+
+
+
+
+
+
+/* --- ADICIONES PARA HEADER Y FOOTER --- */
+
+/* Reajustamos el body para que permita que el Header y Footer ocupen todo el ancho */
+body {
+    display: flex;
+    flex-direction: column;
+    padding: 0; /* Quitamos el padding global para que el header toque los bordes */
+    min-height: 100vh;
+}
+
+/* El contenedor principal necesita un margen ahora que no hay padding en el body */
+main.container {
+    margin: 40px auto; 
+    flex: 1; /* Esto empuja el footer al final de la pantalla */
+}
+
+/* --- ESTILO DEL HEADER --- */
+.main-header {
+    background-color: rgba(30, 41, 59, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* Usamos tu color de tarjeta para coherencia */
+    border-bottom: 1px solid #334155;
+    padding: 1rem 0;
+    width: 100%;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+/* --- STICKY HEADER GO PSSSSSSSSSSSS --- */
+    position: sticky;    /* Se queda "pegado" */
+    top: 0;             /* En la posición 0 de la parte superior */
+    z-index: 1000;      /* Se asegura de pasar por encima de todo lo demás */
+    
+}
+
+.header-container {
+    max-width: 1000px; /* Alineado con el ancho de tu .container */
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.logo {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text-color);
+    letter-spacing: -0.5px;
+}
+
+.logo span { color: var(--accent-color); }
+
+.nav-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: color 0.3s;
+    text-transform: uppercase;
+}
+
+.nav-links a.active, .nav-links a:hover {
+    color: var(--accent-color);
+}
+
+/* --- ESTILO DEL FOOTER --- */
+.main-footer {
+    background-color: var(--card-bg);
+    border-top: 1px solid #334155;
+    padding: 25px 0;
+    width: 100%;
+    margin-top: auto;
+}
+
+.footer-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    color: #64748b;
+    font-size: 0.75rem;
+}
+
+.footer-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-dot {
+    height: 8px;
+    width: 8px;
+    background-color: var(--accent-color);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent-color);
+}
+
+
+/* LOGOS PEQUEÑOS*/
+.logo-min {
+    width: 24px;         /* Tamaño pequeño estándar */
+    height: 24px;
+    object-fit: contain; /* Asegura que no se deforme */
+    vertical-align: middle; 
+    transition: transform 0.2s ease, filter 0.2s ease;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+/* Efecto hover universal para todos tus logos pequeños */
+.logo-min:hover {
+    transform: scale(1.2);
+    filter: brightness(1.2);
+}
+
+
+
+/* Aseguramos que el modal de exportación se vea centrado */
+#export-modal {
+    background: rgba(0,0,0,0.8);
+    align-items: center;
+    justify-content: center;
+}
